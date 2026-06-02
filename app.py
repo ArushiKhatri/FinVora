@@ -3,15 +3,10 @@ import logic
 
 app = Flask(__name__)
 
-# SECRET KEY — needed by Flask to sign/encrypt session cookies.
-# In a real project, store this in an environment variable, never hardcode it.
+
 app.secret_key = "my_budget_tracker_secret_123"
 
-# ─────────────────────────────────────────────
-# In-memory user store (no database needed).
-# Format: { "username": "password" }
-# Data resets every time the server restarts — that's fine for a mini project.
-# ─────────────────────────────────────────────
+
 users = {}
 
 
@@ -72,10 +67,8 @@ def login():
         if users.get(username) != password:
             return render_template("login.html", error="Invalid username or password.")
 
-        # ✅ Credentials are correct — store username in session
-        # Flask's session works like a secure cookie.
-        # Once we set session["username"], it persists across requests
-        # until we call session.clear() (logout).
+      
+      
         session["username"] = username
         return redirect(url_for("home"))
 

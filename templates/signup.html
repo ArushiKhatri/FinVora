@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up — Budget Tracker</title>
+  <title>Sign Up — FinVora</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -71,7 +71,7 @@
       background: #000;
     }
 
-    /* ── Hint text under inputs ── */
+    
     .hint {
       font-size: 0.78rem;
       color: #888;
@@ -79,7 +79,6 @@
       margin-bottom: 12px;
     }
 
-    /* ── Messages ── */
     .msg-error {
       background: #fff0f0;
       border: 1px solid #f5c2c2;
@@ -89,7 +88,7 @@
       margin-bottom: 14px;
     }
 
-    /* ── Footer link ── */
+    
     .footer-link {
       text-align: center;
       font-size: 0.85rem;
@@ -115,18 +114,12 @@
     <h1>💰 Budget Tracker</h1>
     <p class="subtitle">Create an account to get started</p>
 
-    <!--
-      Flask sends an `error` variable from render_template() in app.py.
-      Jinja2 checks if it exists before rendering the error box.
-    -->
     {% if error %}
       <div class="msg-error">{{ error }}</div>
     {% endif %}
 
-    <!--
-      action="/signup" method="POST" — sends form data to the /signup
-      route in app.py as a POST request.
-    -->
+   
+    
     <form action="/signup" method="POST">
 
       <label for="username">Username</label>

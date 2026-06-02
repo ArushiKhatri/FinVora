@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login — Budget Tracker</title>
+  <title>Login — FinVora</title>
   <style>
-    /* ── Reset & Base ── */
+   
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -18,7 +18,7 @@
       padding: 16px;
     }
 
-    /* ── Card ── */
+    
     .card {
       background: #fff;
       border: 1px solid #ddd;
@@ -116,13 +116,10 @@
 
   <div class="card">
 
-    <h1>💰 Budget Tracker</h1>
+    <h1>FinVora</h1>
     <p class="subtitle">Log in to manage your budget</p>
 
-    <!--
-      Flask passes `error` and `success` variables from app.py via render_template().
-      The "if error" block below only shows the red box when Flask sends an error string.
-    -->
+  
     {% if error %}
       <div class="msg-error">{{ error }}</div>
     {% endif %}
@@ -131,11 +128,7 @@
       <div class="msg-success">{{ success }}</div>
     {% endif %}
 
-    <!--
-      action="/login" method="POST" — when the user clicks "Log In",
-      the browser sends a POST request to /login in app.py.
-      Flask then reads request.form.get("username") and request.form.get("password").
-    -->
+   
     <form action="/login" method="POST">
 
       <label for="username">Username</label>
