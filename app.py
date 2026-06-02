@@ -1,14 +1,109 @@
-
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import logic
 
 app = Flask(__name__)
 
+# SECRET KEY — needed by Flask to sign/encrypt session cookies.
+# In a real project, store this in an environment variable, never hardcode it.
+app.secret_key = "my_budget_tracker_secret_123"
+
+# ─────────────────────────────────────────────
+# In-memory user store (no database needed).
+# Format: { "username": "password" }
+# Data resets every time the server restarts — that's fine for a mini project.
+# ─────────────────────────────────────────────
+users = {}
+
+
+# ── Helper ────────────────────────────────────
+def is_logged_in():
+    """Returns True if a user is currently logged in (session has 'username')."""
+    return "username" in session
+
+
+# ── Auth Routes ───────────────────────────────
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    """
+    GET  → show the signup form (signup.html)
+    POST → read form data, validate, store user, redirect to login
+    """
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+
+        # Basic validation
+        if not username or not password:
+            return render_template("signup.html", error="Both fields are required.")
+
+        if len(username) < 3:
+            return render_template("signup.html", error="Username must be at least 3 characters.")
+
+        if len(password) < 4:
+            return render_template("signup.html", error="Password must be at least 4 characters.")
+
+        if username in users:
+            return render_template("signup.html", error="Username already taken. Try another.")
+
+        # Save the new user
+        users[username] = password
+        # Redirect to login with a success message
+        return redirect(url_for("login", success="Account created! Please log in."))
+
+    # GET request — just show the empty signup form
+    return render_template("signup.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """
+    GET  → show the login form (login.html)
+    POST → check credentials, set session, redirect to home
+    """
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+
+        if not username or not password:
+            return render_template("login.html", error="Both fields are required.")
+
+        # Check if user exists AND password matches
+        if users.get(username) != password:
+            return render_template("login.html", error="Invalid username or password.")
+
+        # ✅ Credentials are correct — store username in session
+        # Flask's session works like a secure cookie.
+        # Once we set session["username"], it persists across requests
+        # until we call session.clear() (logout).
+        session["username"] = username
+        return redirect(url_for("home"))
+
+    # GET request — check for optional success message from signup redirect
+    success = request.args.get("success", "")
+    return render_template("login.html", success=success)
+
+
+@app.route("/logout")
+def logout():
+    """Clear the session (log the user out) and send them to login."""
+    session.clear()
+    return redirect(url_for("login"))
+
+
+# ── Protected Routes ──────────────────────────
 
 @app.route("/")
 def home():
-    """Serve the main HTML page."""
-    return render_template("index.html")
+    """
+    Only logged-in users can see the budget tracker.
+    If not logged in, redirect to /login.
+    """
+    if not is_logged_in():
+        return redirect(url_for("login"))
+
+    # Pass username to the template so we can show "Hello, <name>"
+    return render_template("index.html", username=session["username"])
 
 
 @app.route("/health", methods=["GET"])
@@ -19,9 +114,12 @@ def health():
 @app.route("/calculate", methods=["POST"])
 def calculate():
     """
-    Receives JSON from the HTML page's JavaScript fetch() call.
-    Calls logic.py, returns full summary as JSON.
+    Protected API endpoint — only works when logged in.
+    Receives JSON from the frontend's fetch() call.
     """
+    if not is_logged_in():
+        return jsonify({"error": "Unauthorized. Please log in."}), 401
+
     data = request.get_json()
 
     income_sources = data.get("income_sources", {})

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up — Budget Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      border: 1px solid #999;
+      margin-bottom: 14px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #333;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.9rem;
+      background: #222;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    button:hover {
+      background: #000;
+    }
+
+    /* ── Hint text under inputs ── */
+    .hint {
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: -10px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Messages ── */
+    .msg-error {
+      background: #fff0f0;
+      border: 1px solid #f5c2c2;
+      color: #c0392b;
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+    }
+
+    /* ── Footer link ── */
+    .footer-link {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 20px;
+    }
+
+    .footer-link a {
+      color: #222;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .footer-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <h1>💰 Budget Tracker</h1>
+    <p class="subtitle">Create an account to get started</p>
+
+    <!--
+      Flask sends an `error` variable from render_template() in app.py.
+      Jinja2 checks if it exists before rendering the error box.
+    -->
+    {% if error %}
+      <div class="msg-error">{{ error }}</div>
+    {% endif %}
+
+    <!--
+      action="/signup" method="POST" — sends form data to the /signup
+      route in app.py as a POST request.
+    -->
+    <form action="/signup" method="POST">
+
+      <label for="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        type="text"
+        placeholder="Choose a username"
+        autocomplete="username"
+        required
+      />
+      <p class="hint">At least 3 characters.</p>
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Choose a password"
+        autocomplete="new-password"
+        required
+      />
+      <p class="hint">At least 4 characters.</p>
+
+      <button type="submit">Create Account</button>
+
+    </form>
+
+    <p class="footer-link">
+      Already have an account? <a href="/login">Log In</a>
+    </p>
+
+  </div>
+
+</body>
+</html>

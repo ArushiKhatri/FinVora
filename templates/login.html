@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Budget Tracker</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    /* ── Form elements ── */
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      border: 1px solid #999;
+      margin-bottom: 14px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #333;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.9rem;
+      background: #222;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    button:hover {
+      background: #000;
+    }
+
+    /* ── Messages ── */
+    .msg-error {
+      background: #fff0f0;
+      border: 1px solid #f5c2c2;
+      color: #c0392b;
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+    }
+
+    .msg-success {
+      background: #f0fff4;
+      border: 1px solid #a9dfc0;
+      color: #1e7e34;
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      margin-bottom: 14px;
+    }
+
+    /* ── Footer link ── */
+    .footer-link {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 20px;
+    }
+
+    .footer-link a {
+      color: #222;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .footer-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <h1>💰 Budget Tracker</h1>
+    <p class="subtitle">Log in to manage your budget</p>
+
+    <!--
+      Flask passes `error` and `success` variables from app.py via render_template().
+      The "if error" block below only shows the red box when Flask sends an error string.
+    -->
+    {% if error %}
+      <div class="msg-error">{{ error }}</div>
+    {% endif %}
+
+    {% if success %}
+      <div class="msg-success">{{ success }}</div>
+    {% endif %}
+
+    <!--
+      action="/login" method="POST" — when the user clicks "Log In",
+      the browser sends a POST request to /login in app.py.
+      Flask then reads request.form.get("username") and request.form.get("password").
+    -->
+    <form action="/login" method="POST">
+
+      <label for="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        type="text"
+        placeholder="Enter your username"
+        autocomplete="username"
+        required
+      />
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        required
+      />
+
+      <button type="submit">Log In</button>
+
+    </form>
+
+    <p class="footer-link">
+      Don't have an account? <a href="/signup">Sign Up</a>
+    </p>
+
+  </div>
+
+</body>
+</html>
