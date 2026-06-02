@@ -103,5 +103,5 @@ http://127.0.0.1:5000
 **Arushi Khatri**
 
 B.Tech Information Technology
-Swami Keshvanand Institute of Technology, Management & Gramothan, Jaipur
+
 
