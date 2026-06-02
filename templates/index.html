@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget Tracker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+
+    h1 { font-size: 1.4rem; margin-bottom: 24px; }
+    h2 { font-size: 1rem; margin-bottom: 10px; }
+
+    label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
+
+    input, select {
+      width: 100%;
+      padding: 7px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      border: 1px solid #999;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    hr { margin: 24px 0; border: none; border-top: 1px solid #ccc; }
+
+    ul { padding-left: 18px; font-size: 0.9rem; }
+    li { margin-bottom: 4px; }
+
+    p { font-size: 0.9rem; margin-bottom: 8px; }
+
+    #summary { display: none; }
+    #error-msg { color: red; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Budget Tracker</h1>
+
+  <!-- INCOME -->
+  <h2>Step 1 - Add Income</h2>
+  <label>Source</label>
+  <input id="inc-source" type="text" placeholder="e.g. Salary" />
+  <label>Amount</label>
+  <input id="inc-amount" type="number" placeholder="e.g. 30000" />
+  <button onclick="addIncome()">Add Income</button>
+  <ul id="income-list"></ul>
+
+  <hr/>
+
+  <!-- LIMITS -->
+  <h2>Step 2 - Set Limits</h2>
+  <label>Monthly Budget</label>
+  <input id="monthly-budget" type="number" placeholder="e.g. 20000" />
+  <label>Savings Goal</label>
+  <input id="savings-goal" type="number" placeholder="e.g. 8000" />
+
+  <hr/>
+
+  <!-- EXPENSES -->
+  <h2>Step 3 - Add Expenses</h2>
+  <label>Category</label>
+  <select id="exp-category">
+    <option>Food</option>
+    <option>Transport</option>
+    <option>Shopping</option>
+    <option>Bills</option>
+    <option>Entertainment</option>
+    <option>Health</option>
+    <option>Education</option>
+    <option>Other</option>
+  </select>
+  <label>Amount</label>
+  <input id="exp-amount" type="number" placeholder="e.g. 500" />
+  <button onclick="addExpense()">Add Expense</button>
+  <ul id="expense-list"></ul>
+
+  <hr/>
+
+  <!-- CALCULATE -->
+  <button onclick="calculate()">Calculate Summary</button>
+  <p id="error-msg"></p>
+
+  <!-- SUMMARY -->
+  <div id="summary">
+    <hr/>
+    <h2>Summary</h2>
+    <div id="summary-content"></div>
+    <br/>
+    <button onclick="resetAll()">Reset</button>
+  </div>
+
+  <script>
+    const state = { incomes: {}, expenses: {} };
+
+    function addIncome() {
+      const src = document.getElementById("inc-source").value.trim();
+      const amt = parseFloat(document.getElementById("inc-amount").value);
+      if (!src || !amt || amt <= 0) return alert("Enter a valid source and amount.");
+      state.incomes[src] = (state.incomes[src] || 0) + amt;
+      document.getElementById("inc-source").value = "";
+      document.getElementById("inc-amount").value = "";
+      renderList("income-list", state.incomes);
+    }
+
+    function addExpense() {
+      const cat = document.getElementById("exp-category").value;
+      const amt = parseFloat(document.getElementById("exp-amount").value);
+      if (!amt || amt <= 0) return alert("Enter a valid amount.");
+      state.expenses[cat] = (state.expenses[cat] || 0) + amt;
+      document.getElementById("exp-amount").value = "";
+      renderList("expense-list", state.expenses);
+    }
+
+    function renderList(id, obj) {
+      const el = document.getElementById(id);
+      el.innerHTML = Object.entries(obj)
+        .map(([k, v]) => `<li>${k}: ${v.toFixed(2)}</li>`)
+        .join("");
+    }
+
+    async function calculate() {
+      const errEl = document.getElementById("error-msg");
+      errEl.textContent = "";
+
+      if (Object.keys(state.incomes).length === 0)
+        return errEl.textContent = "Add at least one income source.";
+
+      const budget = parseFloat(document.getElementById("monthly-budget").value) || 0;
+      const goal   = parseFloat(document.getElementById("savings-goal").value)   || 0;
+
+      if (budget <= 0) return errEl.textContent = "Set a monthly budget.";
+
+      try {
+        const res  = await fetch("/calculate", {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify({
+            income_sources: state.incomes,
+            expenses:       state.expenses,
+            monthly_budget: budget,
+            savings_goal:   goal,
+          }),
+        });
+
+        const d = await res.json();
+        if (!res.ok) return errEl.textContent = d.error || "Error.";
+
+        const t  = d.totals;
+        const bs = d.budget_status;
+        const ss = d.savings_status;
+
+        let html = `
+          <p>Total Income: ${t.total_income.toFixed(2)}</p>
+          <p>Total Spent: ${t.total_spent.toFixed(2)}</p>
+          <p>Balance Left: ${t.amount_left.toFixed(2)}</p>
+          <p>Monthly Budget: ${d.monthly_budget.toFixed(2)}</p>
+          <p>Budget Status: ${bs.message}</p>
+          <p>Savings Status: ${ss.message}</p>
+        `;
+
+        if (d.expense_pct.length > 0) {
+          html += `<br/><strong>Expenses by Category:</strong><ul>`;
+          d.expense_pct.forEach(e => {
+            html += `<li>${e.category}: ${e.amount.toFixed(2)} (${e.pct}% of income)</li>`;
+          });
+          html += `</ul>`;
+        }
+
+        if (d.top_expense && d.top_expense.category) {
+          const te = d.top_expense;
+          html += `<br/><p>Biggest expense: ${te.category} at ${te.amount.toFixed(2)}. Cutting by 10% saves ${te.saving_tip.toFixed(2)}.</p>`;
+        }
+
+        document.getElementById("summary-content").innerHTML = html;
+        document.getElementById("summary").style.display = "block";
+
+      } catch (err) {
+        errEl.textContent = "Cannot connect to server. Make sure app.py is running.";
+      }
+    }
+
+    function resetAll() {
+      state.incomes  = {};
+      state.expenses = {};
+      document.getElementById("income-list").innerHTML   = "";
+      document.getElementById("expense-list").innerHTML  = "";
+      document.getElementById("monthly-budget").value   = "";
+      document.getElementById("savings-goal").value     = "";
+      document.getElementById("summary").style.display  = "none";
+      document.getElementById("error-msg").textContent  = "";
+    }
+  </script>
+
+</body>
+</html>
