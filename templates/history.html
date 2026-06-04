@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FinVora - History</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: #f0f0f0; }
+        a { color: rgb(84, 84, 177); }
+    </style>
+</head>
+<body>
+    <h2>Monthly History — {{ username }}</h2>
+    <a href="/">← Back to Dashboard</a>
+    <br><br>
+
+    {% if history %}
+    <table>
+        <tr>
+            <th>Month</th>
+            <th>Total Income (₹)</th>
+            <th>Total Spent (₹)</th>
+            <th>Savings (₹)</th>
+            <th>Budget (₹)</th>
+        </tr>
+        {% for row in history %}
+        <tr>
+            <td>{{ row.month }}</td>
+            <td>{{ row.total_income }}</td>
+            <td>{{ row.total_spent }}</td>
+            <td>{{ row.actual_savings }}</td>
+            <td>{{ row.monthly_budget }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No history yet. Calculate your budget to save records!</p>
+    {% endif %}
+</body>
+</html>

@@ -79,14 +79,14 @@
  
   
   <div class="top-bar">
-    <span>👋 Hello, <strong>{{ username }}</strong></span>
+    <span> Hello, <strong>{{ username }}</strong></span>
     <a href="/logout" class="logout-btn">Logout</a>
   </div>
 
   <h1>FinVora</h1>
 
   
-  <h2>Step 1 - Add Income</h2>
+  <h2>Add Income</h2>
   <label>Source</label>
   <input id="inc-source" type="text" placeholder="e.g. Salary" />
   <label>Amount</label>
@@ -97,7 +97,7 @@
   <hr/>
 
  
-  <h2>Step 2 - Set Limits</h2>
+  <h2>Set Limits</h2>
   <label>Monthly Budget</label>
   <input id="monthly-budget" type="number" placeholder="e.g. 20000" />
   <label>Savings Goal</label>
@@ -106,7 +106,7 @@
   <hr/>
 
  
-  <h2>Step 3 - Add Expenses</h2>
+  <h2>Add Expenses</h2>
   <label>Category</label>
   <select id="exp-category">
     <option>Food</option>
@@ -124,7 +124,7 @@
   <ul id="expense-list"></ul>
 
   <hr/>
-
+  <a href="/history" style="display:inline-block; padding:10px 20px; background:#acb0ad; color:#000; font-weight:bold; border-radius:8px; text-decoration:none;"> View History</a>
   <button onclick="calculate()">Calculate Summary</button>
   <p id="error-msg"></p>
 

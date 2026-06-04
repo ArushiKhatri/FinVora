@@ -1,61 +1,58 @@
+# app.py
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from models import db, User, MonthlyRecord
 import logic
+import json
 
 app = Flask(__name__)
-
-
 app.secret_key = "my_budget_tracker_secret_123"
 
+# Tell Flask where to save the database file
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///finvora.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-users = {}
+# Connect db to app
+db.init_app(app)
 
+# Create tables automatically when app starts
+with app.app_context():
+    db.create_all()
 
 # ── Helper ────────────────────────────────────
 def is_logged_in():
-    """Returns True if a user is currently logged in (session has 'username')."""
     return "username" in session
 
-
 # ── Auth Routes ───────────────────────────────
-
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
-    """
-    GET  → show the signup form (signup.html)
-    POST → read form data, validate, store user, redirect to login
-    """
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
 
-        # Basic validation
         if not username or not password:
             return render_template("signup.html", error="Both fields are required.")
-
         if len(username) < 3:
             return render_template("signup.html", error="Username must be at least 3 characters.")
-
         if len(password) < 4:
             return render_template("signup.html", error="Password must be at least 4 characters.")
 
-        if username in users:
-            return render_template("signup.html", error="Username already taken. Try another.")
+        # Check if username already exists IN THE DATABASE
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return render_template("signup.html", error="Username already taken.")
 
-        # Save the new user
-        users[username] = password
-        # Redirect to login with a success message
+        # Save new user TO THE DATABASE
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+
         return redirect(url_for("login", success="Account created! Please log in."))
 
-    # GET request — just show the empty signup form
     return render_template("signup.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """
-    GET  → show the login form (login.html)
-    POST → check credentials, set session, redirect to home
-    """
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
@@ -63,83 +60,116 @@ def login():
         if not username or not password:
             return render_template("login.html", error="Both fields are required.")
 
-        # Check if user exists AND password matches
-        if users.get(username) != password:
+        # Check credentials FROM THE DATABASE
+        user = User.query.filter_by(username=username, password=password).first()
+        if not user:
             return render_template("login.html", error="Invalid username or password.")
 
-      
-      
         session["username"] = username
+        session["user_id"] = user.id   # store user's DB id too
         return redirect(url_for("home"))
 
-    # GET request — check for optional success message from signup redirect
     success = request.args.get("success", "")
     return render_template("login.html", success=success)
 
 
 @app.route("/logout")
 def logout():
-    """Clear the session (log the user out) and send them to login."""
     session.clear()
     return redirect(url_for("login"))
 
 
-# ── Protected Routes ──────────────────────────
-
 @app.route("/")
 def home():
-    """
-    Only logged-in users can see the budget tracker.
-    If not logged in, redirect to /login.
-    """
     if not is_logged_in():
         return redirect(url_for("login"))
-
-    # Pass username to the template so we can show "Hello, <name>"
     return render_template("index.html", username=session["username"])
-
-
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok", "message": "Budget Tracker API is running."})
 
 
 @app.route("/calculate", methods=["POST"])
 def calculate():
-    """
-    Protected API endpoint — only works when logged in.
-    Receives JSON from the frontend's fetch() call.
-    """
     if not is_logged_in():
         return jsonify({"error": "Unauthorized. Please log in."}), 401
 
     data = request.get_json()
-
     income_sources = data.get("income_sources", {})
-    expenses       = data.get("expenses", {})
+    expenses = data.get("expenses", {})
     monthly_budget = float(data.get("monthly_budget", 0))
-    savings_goal   = float(data.get("savings_goal", 0))
+    savings_goal = float(data.get("savings_goal", 0))
 
     if not income_sources:
         return jsonify({"error": "Please add at least one income source."}), 400
 
-    totals         = logic.calculate_totals(income_sources, expenses)
-    budget_status  = logic.get_budget_status(totals["total_spent"], monthly_budget)
+    # Save this month's data to database
+    from datetime import datetime
+    current_month = datetime.now().strftime("%Y-%m")
+    user_id = session["user_id"]
+
+    # Check if record for this month already exists
+    record = MonthlyRecord.query.filter_by(user_id=user_id, month=current_month).first()
+    if record:
+        # Update existing record
+        record.income_sources = json.dumps(income_sources)
+        record.expenses = json.dumps(expenses)
+        record.monthly_budget = monthly_budget
+        record.savings_goal = savings_goal
+    else:
+        # Create new record
+        record = MonthlyRecord(
+            user_id=user_id,
+            month=current_month,
+            income_sources=json.dumps(income_sources),
+            expenses=json.dumps(expenses),
+            monthly_budget=monthly_budget,
+            savings_goal=savings_goal
+        )
+        db.session.add(record)
+
+    db.session.commit()
+
+    # Calculate results (your existing logic)
+    totals = logic.calculate_totals(income_sources, expenses)
+    budget_status = logic.get_budget_status(totals["total_spent"], monthly_budget)
     savings_status = logic.get_savings_status(totals["actual_savings"], savings_goal)
-    top_expense    = logic.get_top_expense(expenses)
-    income_pct     = logic.get_income_percentages(income_sources, totals["total_income"])
-    expense_pct    = logic.get_expense_percentages(expenses, totals["total_income"])
+    top_expense = logic.get_top_expense(expenses)
+    income_pct = logic.get_income_percentages(income_sources, totals["total_income"])
+    expense_pct = logic.get_expense_percentages(expenses, totals["total_income"])
 
     return jsonify({
-        "totals":         totals,
-        "budget_status":  budget_status,
+        "totals": totals,
+        "budget_status": budget_status,
         "savings_status": savings_status,
-        "top_expense":    top_expense,
-        "income_pct":     income_pct,
-        "expense_pct":    expense_pct,
+        "top_expense": top_expense,
+        "income_pct": income_pct,
+        "expense_pct": expense_pct,
         "monthly_budget": monthly_budget,
-        "savings_goal":   savings_goal,
+        "savings_goal": savings_goal,
     })
+
+
+# NEW ROUTE: Get past monthly history
+@app.route("/history", methods=["GET"])
+def history():
+    if not is_logged_in():
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+    records = MonthlyRecord.query.filter_by(user_id=user_id).order_by(MonthlyRecord.month.desc()).all()
+
+    history_list = []
+    for r in records:
+        income_sources = json.loads(r.income_sources) if r.income_sources else {}
+        expenses = json.loads(r.expenses) if r.expenses else {}
+        totals = logic.calculate_totals(income_sources, expenses)
+        history_list.append({
+            "month": r.month,
+            "total_income": totals["total_income"],
+            "total_spent": totals["total_spent"],
+            "actual_savings": totals["actual_savings"],
+            "monthly_budget": r.monthly_budget,
+        })
+
+    return render_template("history.html", history=history_list, username=session["username"])
 
 
 if __name__ == "__main__":
