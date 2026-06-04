@@ -12,8 +12,8 @@
       padding: 0 16px;
     }
 
-    h1 { font-size: 1.4rem; margin-bottom: 24px; }
-    h2 { font-size: 1rem; margin-bottom: 10px; }
+    h1 { font-size: 1.4rem; margin-bottom: 24px; color: #ae6c6c;}
+    h2 { font-size: 1rem; margin-bottom: 10px; color: #b24281;}
 
     label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
 
@@ -22,7 +22,7 @@
       padding: 7px;
       margin-bottom: 10px;
       font-size: 0.9rem;
-      border: 1px solid #999;
+      border: 1px solid #625341;
     }
 
     button {
@@ -47,15 +47,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #f0f0f0;
-      border: 1px solid #ddd;
+      background: #e4b9b9;
+      border: 1px solid #774141;
       padding: 8px 12px;
       margin-bottom: 28px;
       font-size: 0.88rem;
     }
 
     .top-bar span {
-      color: #333;
+      color: #1c1b1b;
     }
 
     .logout-btn {
@@ -70,7 +70,11 @@
     }
 
     .logout-btn:hover {
-      background: #000;
+      background: #b77777;
+    }
+    .change{
+       background: #e4b9b9;
+      border: 1px solid #774141;
     }
   </style>
 </head>
@@ -91,7 +95,7 @@
   <input id="inc-source" type="text" placeholder="e.g. Salary" />
   <label>Amount</label>
   <input id="inc-amount" type="number" placeholder="e.g. 30000" />
-  <button onclick="addIncome()">Add Income</button>
+  <button class="change" onclick="addIncome()" >Add Income</button>
   <ul id="income-list"></ul>
 
   <hr/>
@@ -120,12 +124,12 @@
   </select>
   <label>Amount</label>
   <input id="exp-amount" type="number" placeholder="e.g. 500" />
-  <button onclick="addExpense()">Add Expense</button>
+  <button onclick="addExpense()" class="change" >Add Expense</button>
   <ul id="expense-list"></ul>
 
   <hr/>
-  <a href="/history" style="display:inline-block; padding:10px 20px; background:#acb0ad; color:#000; font-weight:bold; border-radius:8px; text-decoration:none;"> View History</a>
-  <button onclick="calculate()">Calculate Summary</button>
+  <a href="/history" style="display:inline-block; padding:10px 20px; background:#b2cdb9; color:#000; font-weight:bold; border-radius:8px; text-decoration:none;"> View History</a>
+  <button onclick="calculate()" class="change" >Calculate Summary</button>
   <p id="error-msg"></p>
 
   <!-- SUMMARY -->
