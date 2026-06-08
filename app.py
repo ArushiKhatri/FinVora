@@ -20,14 +20,27 @@ def is_logged_in():
     return "username" in session
 
 
+# ─── HOME ────────────────────────────────────────────────────────────────────
+
 @app.route("/")
+def home():
+    if not is_logged_in():
+        return redirect(url_for("login"))
+    return render_template("home.html", username=session["username"])
+
+
+# ─── BUDGET (was index.html) ──────────────────────────────────────────────────
+
+@app.route("/budget")
 @app.route("/index")
 @app.route("/index.html")
-def home():
+def budget():
     if not is_logged_in():
         return redirect(url_for("login"))
     return render_template("index.html", username=session["username"])
 
+
+# ─── SIGNUP ───────────────────────────────────────────────────────────────────
 
 @app.route("/signup", methods=["GET", "POST"])
 @app.route("/signup.html", methods=["GET", "POST"])
@@ -59,6 +72,8 @@ def signup():
     return render_template("signup.html")
 
 
+# ─── LOGIN ────────────────────────────────────────────────────────────────────
+
 @app.route("/login", methods=["GET", "POST"])
 @app.route("/login.html", methods=["GET", "POST"])
 def login():
@@ -83,11 +98,15 @@ def login():
     return render_template("login.html", success=success)
 
 
+# ─── LOGOUT ───────────────────────────────────────────────────────────────────
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
 
+
+# ─── CALCULATE ────────────────────────────────────────────────────────────────
 
 @app.route("/calculate", methods=["POST"])
 def calculate():
@@ -149,6 +168,8 @@ def calculate():
     })
 
 
+# ─── HISTORY ──────────────────────────────────────────────────────────────────
+
 @app.route("/history")
 @app.route("/history.html")
 def history():
@@ -179,6 +200,8 @@ def history():
 
     return render_template("history.html", history=history_list, username=session["username"])
 
+
+# ─── 404 ──────────────────────────────────────────────────────────────────────
 
 @app.errorhandler(404)
 def page_not_found(e):

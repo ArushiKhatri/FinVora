@@ -1,42 +1,170 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>FinVora - History</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-        th { background: #f0f0f0; }
-        a { color: rgb(84, 84, 177); }
-     
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinVora - History</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #fff;
+      color: #222;
+    }
+
+    /* NAVBAR */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 28px;
+      border-bottom: 1px solid #d9a0a0;
+      background: #f9eded;
+    }
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ae6c6c;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.92rem;
+      color: #333;
+    }
+
+    .nav-links a:hover { color: #ae6c6c; }
+    .nav-links a.active { color: #ae6c6c; font-weight: bold; }
+
+    .nav-login {
+      padding: 5px 14px;
+      background: #ae6c6c;
+      color: #fff !important;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .nav-login:hover { background: #944 !important; }
+
+    /* USER BAR */
+    .user-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 28px;
+      background: #e4b9b9;
+      border-bottom: 1px solid #c08080;
+      font-size: 0.85rem;
+    }
+
+    .user-bar a {
+      padding: 4px 12px;
+      background: #222;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.82rem;
+    }
+
+    .user-bar a:hover { background: #b77777; }
+
+    /* CONTENT */
+    .content {
+      max-width: 800px;
+      margin: 32px auto;
+      padding: 0 20px 40px;
+    }
+
+    h2 { color: #b24281; font-size: 1.1rem; margin-bottom: 16px; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th { background: #f9eded; color: #774141; }
+
+    tr:hover { background: #fdf5f5; }
+
+    p { font-size: 0.9rem; color: #555; margin-top: 10px; }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: rgb(84, 84, 177);
+      text-decoration: none;
+      font-size: 0.88rem;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
-    <h2 style="color: #b24281">Monthly History — {{ username }}</h2>
-    <a href="/">← Back to Dashboard</a>
-    <br><br>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="/" class="nav-brand">FinVora</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/budget">Budget</a>
+      <a href="/history" class="active">History</a>
+      {% if username %}
+        <a href="/logout" class="nav-login">Logout</a>
+      {% else %}
+        <a href="/login" class="nav-login">Login</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- USER BAR -->
+  {% if username %}
+  <div class="user-bar">
+    <span>Hello, <strong>{{ username }}</strong></span>
+  </div>
+  {% endif %}
+
+  <div class="content">
+    <h2>Monthly History — {{ username }}</h2>
+    <a href="/" class="back-link">← Back to Home</a>
 
     {% if history %}
     <table>
-        <tr>
-            <th>Month</th>
-            <th>Total Income (₹)</th>
-            <th>Total Spent (₹)</th>
-            <th>Savings (₹)</th>
-            <th>Budget (₹)</th>
-        </tr>
-        {% for row in history %}
-        <tr>
-            <td>{{ row.month }}</td>
-            <td>{{ row.total_income }}</td>
-            <td>{{ row.total_spent }}</td>
-            <td>{{ row.actual_savings }}</td>
-            <td>{{ row.monthly_budget }}</td>
-        </tr>
-        {% endfor %}
+      <tr>
+        <th>Month</th>
+        <th>Total Income (₹)</th>
+        <th>Total Spent (₹)</th>
+        <th>Savings (₹)</th>
+        <th>Budget (₹)</th>
+      </tr>
+      {% for row in history %}
+      <tr>
+        <td>{{ row.month }}</td>
+        <td>{{ row.total_income }}</td>
+        <td>{{ row.total_spent }}</td>
+        <td>{{ row.actual_savings }}</td>
+        <td>{{ row.monthly_budget }}</td>
+      </tr>
+      {% endfor %}
     </table>
     {% else %}
     <p>No history yet. Calculate your budget to save records!</p>
     {% endif %}
+  </div>
+
 </body>
 </html>

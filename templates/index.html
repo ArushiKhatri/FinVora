@@ -3,17 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FinVora</title>
+  <title>FinVora - Budget</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: sans-serif;
+      background: #fff;
+      color: #222;
+    }
+
+    /* NAVBAR */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 28px;
+      border-bottom: 1px solid #d9a0a0;
+      background: #f9eded;
+    }
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ae6c6c;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.92rem;
+      color: #333;
+    }
+
+    .nav-links a:hover { color: #ae6c6c; }
+    .nav-links a.active { color: #ae6c6c; font-weight: bold; }
+
+    .nav-login {
+      padding: 5px 14px;
+      background: #ae6c6c;
+      color: #fff !important;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .nav-login:hover { background: #944 !important; }
+
+    /* USER BAR */
+    .user-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 28px;
+      background: #e4b9b9;
+      border-bottom: 1px solid #c08080;
+      font-size: 0.85rem;
+    }
+
+    .user-bar a {
+      padding: 4px 12px;
+      background: #222;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.82rem;
+    }
+
+    .user-bar a:hover { background: #b77777; }
+
+    /* CONTENT */
+    .content {
       max-width: 600px;
-      margin: 40px auto;
+      margin: 32px auto;
       padding: 0 16px;
     }
 
-    h1 { font-size: 1.4rem; margin-bottom: 24px; color: #ae6c6c;}
-    h2 { font-size: 1rem; margin-bottom: 10px; color: #b24281;}
+    h1 { font-size: 1.4rem; margin-bottom: 24px; color: #ae6c6c; }
+    h2 { font-size: 1rem; margin-bottom: 10px; color: #b24281; }
 
     label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
 
@@ -32,6 +103,11 @@
       margin-bottom: 10px;
     }
 
+    .change {
+      background: #e4b9b9;
+      border: 1px solid #774141;
+    }
+
     hr { margin: 24px 0; border: none; border-top: 1px solid #ccc; }
 
     ul { padding-left: 18px; font-size: 0.9rem; }
@@ -41,104 +117,83 @@
 
     #summary { display: none; }
     #error-msg { color: red; font-size: 0.88rem; }
-
-  
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #e4b9b9;
-      border: 1px solid #774141;
-      padding: 8px 12px;
-      margin-bottom: 28px;
-      font-size: 0.88rem;
-    }
-
-    .top-bar span {
-      color: #1c1b1b;
-    }
-
-    .logout-btn {
-      padding: 5px 12px;
-      font-size: 0.82rem;
-      background: #222;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      margin-bottom: 0;  
-    }
-
-    .logout-btn:hover {
-      background: #b77777;
-    }
-    .change{
-       background: #e4b9b9;
-      border: 1px solid #774141;
-    }
   </style>
 </head>
 <body>
 
- 
-  
-  <div class="top-bar">
-    <span> Hello, <strong>{{ username }}</strong></span>
-    <a href="/logout" class="logout-btn">Logout</a>
+  <!-- NAVBAR -->
+  <nav>
+    <a href="/" class="nav-brand">FinVora</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/budget" class="active">Budget</a>
+      <a href="/history">History</a>
+      {% if username %}
+        <a href="/logout" class="nav-login">Logout</a>
+      {% else %}
+        <a href="/login" class="nav-login">Login</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- USER BAR -->
+  {% if username %}
+  <div class="user-bar">
+    <span>Hello, <strong>{{ username }}</strong></span>
   </div>
+  {% endif %}
 
-  <h1>FinVora</h1>
+  <div class="content">
+    <h1>FinVora — Budget</h1>
 
-  
-  <h2>Add Income</h2>
-  <label>Source</label>
-  <input id="inc-source" type="text" placeholder="e.g. Salary" />
-  <label>Amount</label>
-  <input id="inc-amount" type="number" placeholder="e.g. 30000" />
-  <button class="change" onclick="addIncome()" >Add Income</button>
-  <ul id="income-list"></ul>
+    <h2>Add Income</h2>
+    <label>Source</label>
+    <input id="inc-source" type="text" placeholder="e.g. Salary" />
+    <label>Amount</label>
+    <input id="inc-amount" type="number" placeholder="e.g. 30000" />
+    <button class="change" onclick="addIncome()">Add Income</button>
+    <ul id="income-list"></ul>
 
-  <hr/>
-
- 
-  <h2>Set Limits</h2>
-  <label>Monthly Budget</label>
-  <input id="monthly-budget" type="number" placeholder="e.g. 20000" />
-  <label>Savings Goal</label>
-  <input id="savings-goal" type="number" placeholder="e.g. 8000" />
-
-  <hr/>
-
- 
-  <h2>Add Expenses</h2>
-  <label>Category</label>
-  <select id="exp-category">
-    <option>Food</option>
-    <option>Transport</option>
-    <option>Shopping</option>
-    <option>Bills</option>
-    <option>Entertainment</option>
-    <option>Health</option>
-    <option>Education</option>
-    <option>Other</option>
-  </select>
-  <label>Amount</label>
-  <input id="exp-amount" type="number" placeholder="e.g. 500" />
-  <button onclick="addExpense()" class="change" >Add Expense</button>
-  <ul id="expense-list"></ul>
-
-  <hr/>
-  <a href="/history" style="display:inline-block; padding:10px 20px; background:#b2cdb9; color:#000; font-weight:bold; border-radius:8px; text-decoration:none;"> View History</a>
-  <button onclick="calculate()" class="change" >Calculate Summary</button>
-  <p id="error-msg"></p>
-
-  <!-- SUMMARY -->
-  <div id="summary">
     <hr/>
-    <h2>Summary</h2>
-    <div id="summary-content"></div>
-    <br/>
-    <button onclick="resetAll()">Reset</button>
+
+    <h2>Set Limits</h2>
+    <label>Monthly Budget</label>
+    <input id="monthly-budget" type="number" placeholder="e.g. 20000" />
+    <label>Savings Goal</label>
+    <input id="savings-goal" type="number" placeholder="e.g. 8000" />
+
+    <hr/>
+
+    <h2>Add Expenses</h2>
+    <label>Category</label>
+    <select id="exp-category">
+      <option>Food</option>
+      <option>Transport</option>
+      <option>Shopping</option>
+      <option>Bills</option>
+      <option>Entertainment</option>
+      <option>Health</option>
+      <option>Education</option>
+      <option>Other</option>
+    </select>
+    <label>Amount</label>
+    <input id="exp-amount" type="number" placeholder="e.g. 500" />
+    <button onclick="addExpense()" class="change">Add Expense</button>
+    <ul id="expense-list"></ul>
+
+    <hr/>
+
+    
+    <button onclick="calculate()" class="change">Calculate Summary</button>
+    <p id="error-msg"></p>
+
+    <div id="summary">
+      <hr/>
+      <h2>Summary</h2>
+      <div id="summary-content"></div>
+      <br/>
+      <button onclick="resetAll()">Reset</button>
+    </div>
   </div>
 
   <script>
@@ -183,25 +238,20 @@
       if (budget <= 0) return errEl.textContent = "Set a monthly budget.";
 
       try {
-        const res  = await fetch("/calculate", {
-          method:  "POST",
+        const res = await fetch("/calculate", {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({
+          body: JSON.stringify({
             income_sources: state.incomes,
-            expenses:       state.expenses,
+            expenses: state.expenses,
             monthly_budget: budget,
-            savings_goal:   goal,
+            savings_goal: goal,
           }),
         });
 
         const d = await res.json();
 
-        // NEW: if server returns 401 (not logged in), redirect to login
-        if (res.status === 401) {
-          window.location.href = "/login";
-          return;
-        }
-
+        if (res.status === 401) { window.location.href = "/login"; return; }
         if (!res.ok) return errEl.textContent = d.error || "Error.";
 
         const t  = d.totals;
@@ -241,15 +291,16 @@
     function resetAll() {
       state.incomes  = {};
       state.expenses = {};
-      document.getElementById("income-list").innerHTML   = "";
-      document.getElementById("expense-list").innerHTML  = "";
-      document.getElementById("monthly-budget").value   = "";
-      document.getElementById("savings-goal").value     = "";
-      document.getElementById("summary").style.display  = "none";
-      document.getElementById("error-msg").textContent  = "";
+      document.getElementById("income-list").innerHTML  = "";
+      document.getElementById("expense-list").innerHTML = "";
+      document.getElementById("monthly-budget").value  = "";
+      document.getElementById("savings-goal").value    = "";
+      document.getElementById("summary").style.display = "none";
+      document.getElementById("error-msg").textContent = "";
     }
   </script>
 
 </body>
 </html>
+
 
