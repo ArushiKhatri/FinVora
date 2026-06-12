@@ -6,190 +6,89 @@
   <title>FinVora - Home</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #fff; color: #222; }
 
-    body {
-      font-family: sans-serif;
-      background: #fff;
-      color: #222;
-    }
-
-    /* NAVBAR */
     nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 28px;
-      border-bottom: 1px solid #d9a0a0;
-      background: #f9eded;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 28px; border-bottom: 1px solid #d9a0a0; background: #f9eded;
     }
-
-    .nav-brand {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #ae6c6c;
-      text-decoration: none;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      font-size: 0.92rem;
-      color: #333;
-    }
-
+    .nav-brand { font-size: 1.2rem; font-weight: bold; color: #ae6c6c; text-decoration: none; }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { text-decoration: none; font-size: 0.92rem; color: #333; }
     .nav-links a:hover { color: #ae6c6c; }
-
     .nav-links a.active { color: #ae6c6c; font-weight: bold; }
-
-    .nav-login {
-      padding: 5px 14px;
-      background: #ae6c6c;
-      color: #fff !important;
-      border-radius: 4px;
-      font-size: 0.85rem;
-    }
-
+    .nav-login { padding: 5px 14px; background: #ae6c6c; color: #fff !important; border-radius: 4px; font-size: 0.85rem; }
     .nav-login:hover { background: #944 !important; color: #fff; }
 
-    /* USER BAR (shown when logged in) */
     .user-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 12px;
-      padding: 6px 28px;
-      background: #e4b9b9;
-      border-bottom: 1px solid #c08080;
-      font-size: 0.85rem;
+      display: flex; justify-content: flex-end; align-items: center;
+      gap: 12px; padding: 6px 28px; background: #e4b9b9;
+      border-bottom: 1px solid #c08080; font-size: 0.85rem;
     }
 
-    .user-bar a {
-      padding: 4px 12px;
-      background: #222;
-      color: #fff;
-      text-decoration: none;
-      font-size: 0.82rem;
-    }
-
-    .user-bar a:hover { background: #b77777; }
-
-    /* HERO */
     .hero {
-      text-align: center;
-      padding: 60px 20px 40px;
-      max-width: 600px;
-      margin: 0 auto;
+      text-align: center; padding: 60px 20px 40px;
+      max-width: 600px; margin: 0 auto;
     }
+    .hero h1 { font-size: 2rem; color: #ae6c6c; margin-bottom: 12px; }
+    .hero p { font-size: 1rem; color: #555; margin-bottom: 28px; line-height: 1.6; }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-    .hero h1 {
-      font-size: 2rem;
-      color: #ae6c6c;
-      margin-bottom: 12px;
-    }
-
-    .hero p {
-      font-size: 1rem;
-      color: #555;
-      margin-bottom: 28px;
-      line-height: 1.6;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 9px 22px;
-      font-size: 0.9rem;
-      text-decoration: none;
-      border-radius: 4px;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-primary {
-      background: #ae6c6c;
-      color: #fff;
-    }
-
+    .btn { padding: 9px 22px; font-size: 0.9rem; text-decoration: none; border-radius: 4px; cursor: pointer; border: none; }
+    .btn-primary { background: #ae6c6c; color: #fff; }
     .btn-primary:hover { background: #944; }
-
-    .btn-outline {
-      background: #fff;
-      color: #ae6c6c;
-      border: 1px solid #ae6c6c;
-    }
-
+    .btn-outline { background: #fff; color: #ae6c6c; border: 1px solid #ae6c6c; }
     .btn-outline:hover { background: #f9eded; }
 
     hr { border: none; border-top: 1px solid #e0c8c8; margin: 40px 28px; }
 
-    /* ABOUT */
-    .about {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0 20px 20px;
+    .snapshot {
+      max-width: 600px; margin: 0 auto; padding: 0 20px;
+    }
+    .snapshot h2 { font-size: 1.1rem; color: #b24281; margin-bottom: 4px; }
+    .snapshot .month-tag {
+      font-size: 0.8rem; color: #999; margin-bottom: 16px;
     }
 
-    .about h2 {
-      font-size: 1.1rem;
-      color: #b24281;
-      margin-bottom: 14px;
-    }
+    .snap-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .snap-table td { padding: 10px 4px; border-bottom: 1px solid #f0e0e0; color: #444; }
+    .snap-table td:first-child { color: #666; width: 54%; }
+    .snap-table td:last-child { text-align: right; font-weight: 600; color: #222; }
 
-    .about p {
-      font-size: 0.9rem;
-      color: #444;
-      line-height: 1.65;
-      margin-bottom: 12px;
-    }
+    .snap-table td.val-good  { color: #2a7a3b; }
+    .snap-table td.val-warn  { color: #9a6000; }
+    .snap-table td.val-bad   { color: #b00; }
 
-    /* FEATURES */
-    .features {
-      max-width: 600px;
-      margin: 0 auto 50px;
-      padding: 0 20px;
+    .bar-row td { padding: 4px 4px 10px; border-bottom: 1px solid #f0e0e0; }
+    .bar-track {
+      height: 4px; background: #f0e0e0; border-radius: 2px; overflow: hidden;
     }
+    .bar-fill { height: 100%; border-radius: 2px; background: #ae6c6c; }
+    .bar-fill.safe   { background: #5aab6a; }
+    .bar-fill.warn   { background: #d4900a; }
+    .bar-fill.danger { background: #c0392b; }
 
-    .features h2 {
-      font-size: 1.1rem;
-      color: #b24281;
-      margin-bottom: 14px;
-    }
+    .snap-empty { font-size: 0.88rem; color: #999; padding: 6px 0 10px; }
+    .snap-empty a { color: #ae6c6c; text-decoration: none; }
+    .snap-empty a:hover { text-decoration: underline; }
 
-    .feature-list {
-      list-style: none;
-      padding: 0;
-    }
+    .about { max-width: 600px; margin: 0 auto; padding: 0 20px 20px; }
+    .about h2 { font-size: 1.1rem; color: #b24281; margin-bottom: 14px; }
+    .about p { font-size: 0.9rem; color: #444; line-height: 1.65; margin-bottom: 12px; }
 
+    .features { max-width: 600px; margin: 0 auto 50px; padding: 0 20px; }
+    .features h2 { font-size: 1.1rem; color: #b24281; margin-bottom: 14px; }
+    .feature-list { list-style: none; padding: 0; }
     .feature-list li {
-      font-size: 0.9rem;
-      color: #444;
-      padding: 8px 0;
+      font-size: 0.9rem; color: #444; padding: 8px 0;
       border-bottom: 1px solid #f0e0e0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
     }
-
-    .feature-list li::before {
-      content: "✦";
-      color: #ae6c6c;
-      font-size: 0.75rem;
-    }
+    .feature-list li::before { content: "✦"; color: #ae6c6c; font-size: 0.75rem; }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
   <nav>
     <a href="/" class="nav-brand">FinVora</a>
     <div class="nav-links">
@@ -204,14 +103,12 @@
     </div>
   </nav>
 
-  <!-- USER BAR (only if logged in) -->
   {% if username %}
   <div class="user-bar">
     <span>Hello, <strong>{{ username }}</strong></span>
   </div>
   {% endif %}
 
-  <!-- HERO -->
   <div class="hero">
     <h1>FinVora</h1>
     <p>Your simple personal finance tracker. Track income, manage expenses, set budgets, and save smarter — all in one place.</p>
@@ -223,7 +120,16 @@
 
   <hr/>
 
-  <!-- ABOUT -->
+  <div class="snapshot">
+    <h2>This month</h2>
+    <div class="month-tag" id="month-tag"></div>
+    <div id="snap-body">
+      <p class="snap-empty">Loading…</p>
+    </div>
+  </div>
+
+  <hr/>
+
   <div class="about">
     <h2>About FinVora</h2>
     <p>FinVora is a lightweight personal budgeting tool built to help you take control of your finances without the clutter of complex apps.</p>
@@ -233,7 +139,6 @@
 
   <hr/>
 
-  <!-- FEATURES -->
   <div class="features">
     <h2>What You Can Do</h2>
     <ul class="feature-list">
@@ -245,6 +150,97 @@
       <li>View month-wise history of all your calculations</li>
     </ul>
   </div>
+
+  <script>
+    function inr(n) {
+      return "₹" + Math.abs(n).toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+    function pct(used, total) {
+      return total > 0 ? Math.min(100, Math.round((used / total) * 100)) : 0;
+    }
+    function barClass(p) {
+      return p >= 90 ? "danger" : p >= 70 ? "warn" : "safe";
+    }
+    function daysLeft() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate();
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      const now = new Date();
+      document.getElementById("month-tag").textContent =
+        now.toLocaleString("default", { month: "long", year: "numeric" });
+
+      try {
+        const res = await fetch("/load-entries");
+        if (res.status === 401) {
+          document.getElementById("snap-body").innerHTML =
+            '<p class="snap-empty"><a href="/login">Log in</a> to see your snapshot.</p>';
+          return;
+        }
+        const d = await res.json();
+        const income   = Object.values(d.income_sources || {}).reduce((a, b) => a + b, 0);
+        const spent    = Object.values(d.expenses       || {}).reduce((a, b) => a + b, 0);
+        const budget   = parseFloat(d.monthly_budget) || 0;
+        const goal     = parseFloat(d.savings_goal)   || 0;
+        const balance  = income - spent;
+        const budLeft  = budget - spent;
+        const dl       = daysLeft();
+        const daily    = budLeft > 0 && dl > 0 ? budLeft / dl : 0;
+        const budPct   = pct(spent, budget);
+        const savPct   = pct(balance, goal);
+
+        if (income === 0 && budget === 0) {
+          document.getElementById("snap-body").innerHTML =
+            '<p class="snap-empty">Nothing added yet. <a href="/budget">Go to Budget →</a></p>';
+          return;
+        }
+
+        function barRow(p) {
+          const bc = barClass(p);
+          return `<tr class="bar-row"><td colspan="2">
+            <div class="bar-track"><div class="bar-fill ${bc}" style="width:${p}%"></div></div>
+          </td></tr>`;
+        }
+
+        let rows = "";
+
+        if (income > 0) {
+          rows += `<tr><td>Total income</td><td>${inr(income)}</td></tr>`;
+          rows += `<tr><td>Total spent</td><td>${inr(spent)}</td></tr>`;
+          const balClass = balance >= 0 ? "val-good" : "val-bad";
+          rows += `<tr><td>Balance left</td><td class="${balClass}">${balance < 0 ? "−" : ""}${inr(balance)}</td></tr>`;
+        }
+
+        if (budget > 0) {
+          const blClass = budLeft < 0 ? "val-bad" : budPct >= 70 ? "val-warn" : "val-good";
+          rows += `<tr><td>Budget left <span style="color:#bbb;font-weight:400">(${budPct}% used)</span></td>
+                       <td class="${blClass}">${budLeft < 0 ? "−" : ""}${inr(budLeft)}</td></tr>`;
+          rows += barRow(budPct);
+          if (dl > 0 && daily > 0) {
+            rows += `<tr><td>Daily allowance <span style="color:#bbb;font-weight:400">(${dl} days left)</span></td>
+                         <td>${inr(daily)}/day</td></tr>`;
+          }
+        }
+
+        if (goal > 0) {
+          const metGoal = balance >= goal;
+          const sgClass = metGoal ? "val-good" : balance >= goal * 0.5 ? "val-warn" : "val-bad";
+          const sgNote  = metGoal ? " ✓" : ` of ${inr(goal)} goal`;
+          rows += `<tr><td>Savings so far</td>
+                       <td class="${sgClass}">${inr(Math.max(0, balance))}${sgNote}</td></tr>`;
+          if (!metGoal) rows += barRow(savPct);
+        }
+
+        document.getElementById("snap-body").innerHTML =
+          `<table class="snap-table"><tbody>${rows}</tbody></table>`;
+
+      } catch(e) {
+        document.getElementById("snap-body").innerHTML =
+          '<p class="snap-empty">Could not load data. Make sure app.py is running.</p>';
+      }
+    });
+  </script>
 
 </body>
 </html>

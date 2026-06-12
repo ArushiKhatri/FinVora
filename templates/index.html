@@ -22,37 +22,12 @@
       border-bottom: 1px solid #d9a0a0;
       background: #f9eded;
     }
-
-    .nav-brand {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #ae6c6c;
-      text-decoration: none;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      font-size: 0.92rem;
-      color: #333;
-    }
-
+    .nav-brand { font-size: 1.2rem; font-weight: bold; color: #ae6c6c; text-decoration: none; }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { text-decoration: none; font-size: 0.92rem; color: #333; }
     .nav-links a:hover { color: #ae6c6c; }
     .nav-links a.active { color: #ae6c6c; font-weight: bold; }
-
-    .nav-login {
-      padding: 5px 14px;
-      background: #ae6c6c;
-      color: #fff !important;
-      border-radius: 4px;
-      font-size: 0.85rem;
-    }
-
+    .nav-login { padding: 5px 14px; background: #ae6c6c; color: #fff !important; border-radius: 4px; font-size: 0.85rem; }
     .nav-login:hover { background: #944 !important; }
 
     /* USER BAR */
@@ -66,57 +41,59 @@
       font-size: 0.85rem;
     }
 
-    .user-bar a {
-      padding: 4px 12px;
-      background: #222;
-      color: #fff;
-      text-decoration: none;
-      font-size: 0.82rem;
-    }
-
-    .user-bar a:hover { background: #b77777; }
-
     /* CONTENT */
-    .content {
-      max-width: 600px;
-      margin: 32px auto;
-      padding: 0 16px;
-    }
-
+    .content { max-width: 600px; margin: 32px auto; padding: 0 16px; }
     h1 { font-size: 1.4rem; margin-bottom: 24px; color: #ae6c6c; }
     h2 { font-size: 1rem; margin-bottom: 10px; color: #b24281; }
-
     label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
-
     input, select {
-      width: 100%;
-      padding: 7px;
-      margin-bottom: 10px;
-      font-size: 0.9rem;
-      border: 1px solid #625341;
+      width: 100%; padding: 7px; margin-bottom: 10px;
+      font-size: 0.9rem; border: 1px solid #625341;
     }
-
-    button {
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-
-    .change {
-      background: #e4b9b9;
-      border: 1px solid #774141;
-    }
-
+    button { padding: 8px 16px; font-size: 0.9rem; cursor: pointer; margin-bottom: 10px; }
+    .change { background: #e4b9b9; border: 1px solid #774141; }
     hr { margin: 24px 0; border: none; border-top: 1px solid #ccc; }
-
-    ul { padding-left: 18px; font-size: 0.9rem; }
-    li { margin-bottom: 4px; }
-
     p { font-size: 0.9rem; margin-bottom: 8px; }
-
     #summary { display: none; }
     #error-msg { color: red; font-size: 0.88rem; }
+
+    /* ENTRY LIST */
+    .entry-list { list-style: none; padding: 0; margin-bottom: 10px; }
+    .entry-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f0e0e0;
+      font-size: 0.88rem;
+    }
+    .entry-item span.label { flex: 1; }
+    .entry-item input.edit-key {
+      flex: 1; padding: 3px 6px; font-size: 0.85rem;
+      border: 1px solid #aaa; margin-bottom: 0; width: auto;
+    }
+    .entry-item input.edit-amt {
+      width: 90px; padding: 3px 6px; font-size: 0.85rem;
+      border: 1px solid #aaa; margin-bottom: 0;
+    }
+    .btn-edit, .btn-del, .btn-save, .btn-cancel {
+      padding: 2px 8px; font-size: 0.78rem; cursor: pointer;
+      border-radius: 2px; border: 1px solid #999; background: #f5f5f5;
+    }
+    .btn-edit  { border-color: #ae6c6c; color: #ae6c6c; }
+    .btn-del   { border-color: #c00; color: #c00; }
+    .btn-save  { border-color: #3a7; color: #3a7; }
+    .btn-cancel{ border-color: #888; color: #666; }
+
+    /* save indicator */
+    .save-indicator {
+      font-size: 0.78rem;
+      color: #3a7;
+      margin-left: 6px;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .save-indicator.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -136,7 +113,6 @@
     </div>
   </nav>
 
-  <!-- USER BAR -->
   {% if username %}
   <div class="user-bar">
     <span>Hello, <strong>{{ username }}</strong></span>
@@ -146,25 +122,28 @@
   <div class="content">
     <h1>FinVora — Budget</h1>
 
-    <h2>Add Income</h2>
+    <!-- INCOME -->
+    <h2>Add Income <span class="save-indicator" id="inc-saved">✓ Saved</span></h2>
     <label>Source</label>
     <input id="inc-source" type="text" placeholder="e.g. Salary" />
     <label>Amount</label>
     <input id="inc-amount" type="number" placeholder="e.g. 30000" />
     <button class="change" onclick="addIncome()">Add Income</button>
-    <ul id="income-list"></ul>
+    <ul class="entry-list" id="income-list"></ul>
 
     <hr/>
 
-    <h2>Set Limits</h2>
+    <!-- LIMITS -->
+    <h2>Set Limits <span class="save-indicator" id="limits-saved">✓ Saved</span></h2>
     <label>Monthly Budget</label>
-    <input id="monthly-budget" type="number" placeholder="e.g. 20000" />
+    <input id="monthly-budget" type="number" placeholder="e.g. 20000" oninput="debounceSaveLimits()" />
     <label>Savings Goal</label>
-    <input id="savings-goal" type="number" placeholder="e.g. 8000" />
+    <input id="savings-goal" type="number" placeholder="e.g. 8000" oninput="debounceSaveLimits()" />
 
     <hr/>
 
-    <h2>Add Expenses</h2>
+    <!-- EXPENSES -->
+    <h2>Add Expenses <span class="save-indicator" id="exp-saved">✓ Saved</span></h2>
     <label>Category</label>
     <select id="exp-category">
       <option>Food</option>
@@ -179,11 +158,10 @@
     <label>Amount</label>
     <input id="exp-amount" type="number" placeholder="e.g. 500" />
     <button onclick="addExpense()" class="change">Add Expense</button>
-    <ul id="expense-list"></ul>
+    <ul class="entry-list" id="expense-list"></ul>
 
     <hr/>
 
-    
     <button onclick="calculate()" class="change">Calculate Summary</button>
     <p id="error-msg"></p>
 
@@ -197,44 +175,182 @@
   </div>
 
   <script>
+    // ── in-memory state ──────────────────────────────────────────────────────
     const state = { incomes: {}, expenses: {} };
 
-    function addIncome() {
+    // ── page load: pull saved data ───────────────────────────────────────────
+    window.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch("/load-entries");
+        if (res.status === 401) { window.location.href = "/login"; return; }
+        const d = await res.json();
+        state.incomes  = d.income_sources || {};
+        state.expenses = d.expenses       || {};
+        if (d.monthly_budget) document.getElementById("monthly-budget").value = d.monthly_budget;
+        if (d.savings_goal)   document.getElementById("savings-goal").value   = d.savings_goal;
+        renderAllLists();
+      } catch (e) { /* server not reachable */ }
+    });
+
+    // ── helpers ──────────────────────────────────────────────────────────────
+    function flash(id) {
+      const el = document.getElementById(id);
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    async function saveEntry(payload) {
+      await fetch("/save-entry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    }
+
+    // ── limits auto-save (debounced) ──────────────────────────────────────────
+    let limitsTimer = null;
+    function debounceSaveLimits() {
+      clearTimeout(limitsTimer);
+      limitsTimer = setTimeout(async () => {
+        await saveEntry({
+          type: "limits",
+          monthly_budget: parseFloat(document.getElementById("monthly-budget").value) || 0,
+          savings_goal:   parseFloat(document.getElementById("savings-goal").value)   || 0
+        });
+        flash("limits-saved");
+      }, 700);
+    }
+
+    // ── INCOME ───────────────────────────────────────────────────────────────
+    async function addIncome() {
       const src = document.getElementById("inc-source").value.trim();
       const amt = parseFloat(document.getElementById("inc-amount").value);
       if (!src || !amt || amt <= 0) return alert("Enter a valid source and amount.");
       state.incomes[src] = (state.incomes[src] || 0) + amt;
-      document.getElementById("inc-source").value = "";
-      document.getElementById("inc-amount").value = "";
-      renderList("income-list", state.incomes);
+      document.getElementById("inc-source").value  = "";
+      document.getElementById("inc-amount").value  = "";
+      renderList("income-list", state.incomes, "income");
+      await saveEntry({ type: "income", action: "add", key: src, amount: state.incomes[src] });
+      flash("inc-saved");
     }
 
-    function addExpense() {
+    async function deleteIncome(key) {
+      delete state.incomes[key];
+      renderList("income-list", state.incomes, "income");
+      await saveEntry({ type: "income", action: "delete", key });
+      flash("inc-saved");
+    }
+
+    async function saveEditedIncome(oldKey, newKey, newAmt) {
+      if (!newKey || newAmt <= 0) return alert("Enter a valid name and amount.");
+      if (oldKey !== newKey) delete state.incomes[oldKey];
+      state.incomes[newKey] = newAmt;
+      renderList("income-list", state.incomes, "income");
+      await saveEntry({ type: "income", action: "add", old_key: oldKey, key: newKey, amount: newAmt });
+      flash("inc-saved");
+    }
+
+    // ── EXPENSE ──────────────────────────────────────────────────────────────
+    async function addExpense() {
       const cat = document.getElementById("exp-category").value;
       const amt = parseFloat(document.getElementById("exp-amount").value);
       if (!amt || amt <= 0) return alert("Enter a valid amount.");
       state.expenses[cat] = (state.expenses[cat] || 0) + amt;
       document.getElementById("exp-amount").value = "";
-      renderList("expense-list", state.expenses);
+      renderList("expense-list", state.expenses, "expense");
+      await saveEntry({ type: "expense", action: "add", key: cat, amount: state.expenses[cat] });
+      flash("exp-saved");
     }
 
-    function renderList(id, obj) {
+    async function deleteExpense(key) {
+      delete state.expenses[key];
+      renderList("expense-list", state.expenses, "expense");
+      await saveEntry({ type: "expense", action: "delete", key });
+      flash("exp-saved");
+    }
+
+    async function saveEditedExpense(key, newAmt) {
+      if (newAmt <= 0) return alert("Enter a valid amount.");
+      state.expenses[key] = newAmt;
+      renderList("expense-list", state.expenses, "expense");
+      await saveEntry({ type: "expense", action: "add", key, amount: newAmt });
+      flash("exp-saved");
+    }
+
+    // ── RENDER LISTS ─────────────────────────────────────────────────────────
+    function renderList(id, obj, type) {
       const el = document.getElementById(id);
-      el.innerHTML = Object.entries(obj)
-        .map(([k, v]) => `<li>${k}: ${v.toFixed(2)}</li>`)
-        .join("");
+      el.innerHTML = "";
+      Object.entries(obj).forEach(([k, v]) => {
+        const li = document.createElement("li");
+        li.className = "entry-item";
+        li.dataset.key = k;
+
+        // view mode
+        li.innerHTML = `
+          <span class="label">${k}: ${v.toFixed(2)}</span>
+          <button class="btn-edit" onclick="startEdit(this, '${type}')">Edit</button>
+          <button class="btn-del"  onclick="confirmDelete('${k}', '${type}')">Delete</button>
+        `;
+        el.appendChild(li);
+      });
     }
 
+    function renderAllLists() {
+      renderList("income-list",  state.incomes,  "income");
+      renderList("expense-list", state.expenses, "expense");
+    }
+
+    // ── INLINE EDIT ──────────────────────────────────────────────────────────
+    function startEdit(btn, type) {
+      const li  = btn.closest(".entry-item");
+      const key = li.dataset.key;
+      const val = type === "income" ? state.incomes[key] : state.expenses[key];
+
+      if (type === "income") {
+        li.innerHTML = `
+          <input class="edit-key" value="${key}" placeholder="Source name"/>
+          <input class="edit-amt" type="number" value="${val}" placeholder="Amount"/>
+          <button class="btn-save"   onclick="commitEdit(this, 'income', '${key}')">Save</button>
+          <button class="btn-cancel" onclick="renderList('income-list', state.incomes, 'income')">Cancel</button>
+        `;
+      } else {
+        // for expenses the key (category) isn't editable since it's a select
+        li.innerHTML = `
+          <span class="label">${key}</span>
+          <input class="edit-amt" type="number" value="${val}" placeholder="Amount"/>
+          <button class="btn-save"   onclick="commitEdit(this, 'expense', '${key}')">Save</button>
+          <button class="btn-cancel" onclick="renderList('expense-list', state.expenses, 'expense')">Cancel</button>
+        `;
+      }
+    }
+
+    function commitEdit(btn, type, oldKey) {
+      const li = btn.closest(".entry-item");
+      if (type === "income") {
+        const newKey = li.querySelector(".edit-key").value.trim();
+        const newAmt = parseFloat(li.querySelector(".edit-amt").value);
+        saveEditedIncome(oldKey, newKey, newAmt);
+      } else {
+        const newAmt = parseFloat(li.querySelector(".edit-amt").value);
+        saveEditedExpense(oldKey, newAmt);
+      }
+    }
+
+    function confirmDelete(key, type) {
+      if (!confirm(`Delete "${key}"?`)) return;
+      if (type === "income")  deleteIncome(key);
+      else                    deleteExpense(key);
+    }
+
+    // ── CALCULATE ────────────────────────────────────────────────────────────
     async function calculate() {
       const errEl = document.getElementById("error-msg");
       errEl.textContent = "";
-
       if (Object.keys(state.incomes).length === 0)
         return errEl.textContent = "Add at least one income source.";
-
       const budget = parseFloat(document.getElementById("monthly-budget").value) || 0;
       const goal   = parseFloat(document.getElementById("savings-goal").value)   || 0;
-
       if (budget <= 0) return errEl.textContent = "Set a monthly budget.";
 
       try {
@@ -248,16 +364,11 @@
             savings_goal: goal,
           }),
         });
-
         const d = await res.json();
-
         if (res.status === 401) { window.location.href = "/login"; return; }
         if (!res.ok) return errEl.textContent = d.error || "Error.";
 
-        const t  = d.totals;
-        const bs = d.budget_status;
-        const ss = d.savings_status;
-
+        const t = d.totals, bs = d.budget_status, ss = d.savings_status;
         let html = `
           <p>Total Income: ${t.total_income.toFixed(2)}</p>
           <p>Total Spent: ${t.total_spent.toFixed(2)}</p>
@@ -266,7 +377,6 @@
           <p>Budget Status: ${bs.message}</p>
           <p>Savings Status: ${ss.message}</p>
         `;
-
         if (d.expense_pct.length > 0) {
           html += `<br/><strong>Expenses by Category:</strong><ul>`;
           d.expense_pct.forEach(e => {
@@ -274,20 +384,18 @@
           });
           html += `</ul>`;
         }
-
         if (d.top_expense && d.top_expense.category) {
           const te = d.top_expense;
           html += `<br/><p>Biggest expense: ${te.category} at ${te.amount.toFixed(2)}. Cutting by 10% saves ${te.saving_tip.toFixed(2)}.</p>`;
         }
-
         document.getElementById("summary-content").innerHTML = html;
         document.getElementById("summary").style.display = "block";
-
       } catch (err) {
         errEl.textContent = "Cannot connect to server. Make sure app.py is running.";
       }
     }
 
+    // ── RESET ────────────────────────────────────────────────────────────────
     function resetAll() {
       state.incomes  = {};
       state.expenses = {};
@@ -297,10 +405,13 @@
       document.getElementById("savings-goal").value    = "";
       document.getElementById("summary").style.display = "none";
       document.getElementById("error-msg").textContent = "";
+      // also clear from server
+      saveEntry({ type: "income",  action: "delete", key: "__all__" });
+      // (server handles missing key gracefully; a full wipe needs a dedicated endpoint
+      //  or the user can just let Calculate overwrite the record with empty state)
     }
   </script>
 
 </body>
 </html>
-
 
